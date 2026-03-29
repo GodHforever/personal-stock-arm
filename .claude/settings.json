@@ -1,0 +1,39 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'ARGS=$(echo \"$TOOL_INPUT\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get(\\\"command\\\",\\\"\\\"))\" 2>/dev/null); if echo \"$ARGS\" | grep -qE \"^git commit|^git merge.*main\"; then python3 scripts/validate_paradigm.py --pre-commit; fi'",
+            "timeout": 30000
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Write|Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash -c 'FILE=$(echo \"$TOOL_INPUT\" | python3 -c \"import sys,json; print(json.load(sys.stdin).get(\\\"file_path\\\",\\\"\\\"))\" 2>/dev/null); if echo \"$FILE\" | grep -qE \"^specs/.*\\.md$\"; then python3 scripts/validate_paradigm.py --spec \"$FILE\" 2>&1 | tail -20; fi'",
+            "timeout": 10000
+          }
+        ]
+      }
+    ],
+    "PostSession": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 scripts/validate_paradigm.py --claude-md 2>&1 | tail -15",
+            "timeout": 10000
+          }
+        ]
+      }
+    ]
+  }
+}
