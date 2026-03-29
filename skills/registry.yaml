@@ -1,0 +1,16 @@
+# Skills Registry
+# Records all evaluated external skills/tools.
+# Updated by agents during feature implementation (see docs/requirements/skills-integration.md)
+
+skills: []
+  # Example entry:
+  # - name: "longbridge-mcp"
+  #   source: "https://open.longbridge.com/mcp"
+  #   category: "data-fetching"
+  #   tier: "direct-use"        # direct-use | reference | ignore
+  #   evaluated: "2026-03-29"
+  #   decision: "Direct integration via MCP protocol"
+  #   new_deps: ["longbridge"]
+  #   adapter: "src/skills/longbridge_adapter.py"
+  #   status: "planned"         # planned | implemented | deprecated
+  #   notes: ""

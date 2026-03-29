@@ -1,0 +1,25 @@
+#!/bin/bash
+# commit-msg hook — 提交消息格式校验
+# 强制执行: feat(module): 描述 格式
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+if [[ "$SCRIPT_DIR" == *".git/hooks"* ]]; then
+    ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+else
+    ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+fi
+
+python3 "$ROOT/scripts/validate_paradigm.py" --commit-msg "$1"
+
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "!! 提交被阻止：提交消息格式不符合规范 !!"
+    echo ""
+    exit 1
+fi
+
+exit 0

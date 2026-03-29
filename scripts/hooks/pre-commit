@@ -1,0 +1,35 @@
+#!/bin/bash
+# pre-commit hook — 范式合规强制检查
+# 安装方式: cp scripts/hooks/pre-commit .git/hooks/pre-commit && chmod +x .git/hooks/pre-commit
+# 或运行: scripts/install-hooks.sh
+
+set -e
+
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+# 从.git/hooks回溯到项目根目录
+if [[ "$SCRIPT_DIR" == *".git/hooks"* ]]; then
+    ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+else
+    ROOT="$(cd "$SCRIPT_DIR/../.." && pwd)"
+fi
+
+echo "=========================================="
+echo "  范式合规检查 (pre-commit)"
+echo "=========================================="
+
+# 运行范式验证脚本
+python3 "$ROOT/scripts/validate_paradigm.py" --pre-commit
+
+EXIT_CODE=$?
+
+if [ $EXIT_CODE -ne 0 ]; then
+    echo ""
+    echo "!! 提交被阻止：范式合规检查未通过 !!"
+    echo "!! 请修复上述问题后重新提交 !!"
+    echo ""
+    exit 1
+fi
+
+echo ""
+echo "范式合规检查通过，允许提交。"
+exit 0
