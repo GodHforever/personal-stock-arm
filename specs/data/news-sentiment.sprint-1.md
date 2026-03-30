@@ -1,0 +1,29 @@
+## Sprint Report
+
+- **Feature Spec**: specs/data/news-sentiment.md
+- **Files Changed**:
+  - `src/data/news/__init__.py` — 模块入口，导出公共接口
+  - `src/data/news/base.py` — BaseNewsSource ABC + NewsItem 数据模型
+  - `src/data/news/longbridge_news.py` — Longbridge 新闻适配器（ContentContext）
+  - `src/data/news/rss_source.py` — RSS Feed 解析器（httpx + xml.etree.ElementTree）
+  - `src/data/news/manager.py` — NewsManager 聚合管理器 + AntiScrapeConfig 反爬配置
+  - `tests/unit/data/test_news_source.py` — 54 个单元测试
+- **New Dependencies**: none（longbridge 已在环境中，RSS 解析使用标准库）
+- **Test Coverage**: 54/54 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范（snake_case 文件名、Pydantic 模型、中文注释）
+  - [x] 无硬编码配置值（Longbridge 凭证通过环境变量获取）
+  - [x] 所有验收标准有对应测试（AC-1 ~ AC-8 均已覆盖）
+  - [x] 无新增外部依赖
+  - [x] 外部调用有超时、重试和错误处理（通过 NetworkClient）
+  - [x] 无安全问题（无暴露的 API Key、无注入风险）
+  - [x] ruff check: 零错误
+  - [x] mypy: 零错误
+  - [x] 全部 54 个单元测试通过
+  - [x] N/A（无外部 skills 集成）
+- **Known Limitations**:
+  - Longbridge ContentContext 在当前 SDK 版本（0.2.77）中不可用，适配器已做优雅降级处理
+  - 东方财富/雪球爬虫未实现（按设计要求，初版仅实现 RSS + Longbridge）
+  - Tavily/SerpAPI 搜索未实现（用户无 API Key）
+  - RSS 源的 URL 是硬编码的公开地址，实际可用性取决于源站是否提供 RSS
+- **Integrated Skills**: none
