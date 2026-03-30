@@ -1,0 +1,25 @@
+## Sprint Report
+
+- **Feature Spec**: config-management (specs/infra/config-management.md)
+- **Files Changed**:
+  - `src/config/__init__.py` — 模块公共接口导出
+  - `src/config/models.py` — Pydantic 配置模型（AppConfig, LLMConfig, DataConfig, DatabaseConfig, NetworkConfig, SchedulerConfig, CloudConfig, PushConfig, RuntimeMode）
+  - `src/config/loader.py` — YAML 配置文件加载器（load_yaml_config 函数）
+  - `src/config/manager.py` — ConfigManager 单例、运行时模式检测、多源配置合并、ConfigLoadError
+  - `tests/unit/test_config.py` — 46 个单元测试覆盖所有 AC
+- **New Dependencies**: types-PyYAML（仅 dev 依赖，mypy 类型检查用）
+- **Test Coverage**: 46/46 passed
+- **Self-Check Results**:
+  - [pass] 代码遵循 CLAUDE.md 编码约定
+  - [pass] 无硬编码配置值（使用配置系统）
+  - [pass] 所有验收标准有对应测试（AC-1 至 AC-10 均覆盖）
+  - [pass] 新依赖已在 requirements.txt 中（pydantic-settings, pyyaml 已存在）
+  - [pass] Lint 零错误: ruff check src/config/ — All checks passed
+  - [pass] 类型检查通过: mypy src/config/ — Success: no issues found in 4 source files
+  - [pass] 单元测试通过: pytest tests/unit/test_config.py -v — 46 passed in 0.51s
+  - [pass] 无安全问题（API Key 不在代码中，SecretStr 用于所有敏感字段）
+- **Known Limitations**:
+  - config.yaml 加载路径固定为 `config/config.yaml`，暂不支持通过环境变量自定义路径
+  - .env 文件加载需在应用入口处调用 `dotenv.load_dotenv()`，ConfigManager 通过 `os.environ` 读取已加载的环境变量
+  - 环境变量映射采用手动分区前缀匹配，未使用 pydantic-settings 的 env_nested_delimiter（因 `_` 分隔符与字段名中的 `_` 冲突）
+- **Integrated Skills**: none
