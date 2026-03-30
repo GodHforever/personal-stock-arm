@@ -183,3 +183,8 @@ Commit format:
 | analysis/llm | Completed | Sprint #9 | LiteLLMRouter + PromptManager + TokenBudgetTracker + 结构化输出 (36 tests passed) |
 | analysis/technical | Completed | Sprint #10 | MA/MACD/RSI/成交量 指标计算 + TechnicalAnalyzer 多空评分 (29 tests passed) |
 | analysis/skills | Completed | Sprint #11 | BaseSkillAdapter + SkillRegistry + YAML策略加载器 (21 tests passed) |
+| business/watchlist | Completed | Sprint #12 | WatchlistManager分组CRUD + StockAnalysisPipeline每日分析流水线 + LLMVerdict结构化输出 (35 tests passed) |
+| business/macro | Completed | Sprint #13 | MacroTracker指标拉取+LLM分析 + 20+核心宏观指标定义 (34 tests passed) |
+| business/earnings | Completed | Sprint #14 | EarningsProcessor财报扫描+LLM摘要 (17 tests passed) |
+| business/international | Completed | Sprint #15 | InternationalBriefingGenerator隔夜市场+事件影响+日程 (17 tests passed) |
+| business/reports | Completed | Sprint #16 | ReportManager研报获取+LLM摘要+评级追踪 (17 tests passed) |
