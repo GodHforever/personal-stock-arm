@@ -176,3 +176,4 @@ Commit format:
 | log | Completed | Sprint #2 | setup_logging + get_logger + 运行模式自适应输出 + RotatingFileHandler (QA 92/100) |
 | db | Completed | Sprint #3 | Database 异步引擎 + SQLite WAL + TimestampMixin + Alembic 迁移 + SchedulerState (QA 84/100) |
 | network | Completed | Sprint #4 | NetworkClient httpx异步 + 指数退避重试 + DataSourceError 结构化异常 (QA 90/100) |
+| scheduler | Completed | Sprint #5 | TaskScheduler APScheduler异步 + 运行模式自适应 + catch-up补跑 + last_run_time持久化 (QA 82/100) |
