@@ -174,3 +174,5 @@ Commit format:
 |--------|--------|--------|-------|
 | config | Completed | Sprint #1 | ConfigManager 单例 + 8分区 Pydantic 模型 + 多源优先级加载 + 运行模式检测 (QA 85/100) |
 | log | Completed | Sprint #2 | setup_logging + get_logger + 运行模式自适应输出 + RotatingFileHandler (QA 92/100) |
+| db | Completed | Sprint #3 | Database 异步引擎 + SQLite WAL + TimestampMixin + Alembic 迁移 + SchedulerState (QA 84/100) |
+| network | Completed | Sprint #4 | NetworkClient httpx异步 + 指数退避重试 + DataSourceError 结构化异常 (QA 90/100) |
