@@ -1,0 +1,25 @@
+## Sprint Report
+
+- **Feature Spec**: 日志系统 (`specs/infra/logging-system.md`)
+- **Files Changed**:
+  - `src/log/__init__.py` — 模块入口，导出 setup_logging、get_logger
+  - `src/log/setup.py` — 日志初始化逻辑，格式器配置，RotatingFileHandler 和 StreamHandler 管理
+  - `tests/unit/test_log.py` — 14 个单元测试
+  - `specs/infra/logging-system.md` — Feature Spec 文档
+- **New Dependencies**: 无（使用 Python 标准库 logging）
+- **Test Coverage**: 14/14 通过
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范
+  - [x] 无硬编码配置值（通过 AppConfig 获取所有配置）
+  - [x] 所有验收标准有对应测试
+  - [x] 无新增依赖
+  - [x] 无外部调用（纯标准库操作）
+  - [x] 无安全问题
+  - [x] ruff lint 零错误
+  - [x] mypy 类型检查通过
+  - [x] 全部单元测试通过
+  - [x] 无外部 skill 集成
+- **Known Limitations**:
+  - 日志轮转仅按文件大小，不按时间（符合需求，10MB/文件，5 个备份）
+  - 日志格式为纯文本，未采用 JSON 结构化（当前阶段无此需求）
+- **Integrated Skills**: 无
