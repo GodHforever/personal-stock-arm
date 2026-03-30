@@ -1,0 +1,31 @@
+## Sprint Report
+
+- **Feature Spec**: push-channels (`specs/notification/push-channels.md`)
+- **Files Changed**:
+  - `src/notification/__init__.py` — 模块入口，导出公共接口
+  - `src/notification/base.py` — BaseNotifier ABC、NotificationMessage、SendResult 模型
+  - `src/notification/wechat.py` — 企业微信 Webhook 通知器
+  - `src/notification/feishu.py` — 飞书 Webhook 通知器
+  - `src/notification/email.py` — Email SMTP 通知器
+  - `src/notification/webhook.py` — 自定义 Webhook 通知器
+  - `src/notification/manager.py` — NotificationManager 多渠道编排 + 推送策略
+  - `src/config/models.py` — PushConfig 扩展（新增飞书、邮件、自定义Webhook、事件限额字段）
+  - `tests/unit/notification/__init__.py` — 测试包初始化
+  - `tests/unit/notification/test_notification.py` — 52 项单元测试
+- **New Dependencies**: none（httpx 和 smtplib 已可用）
+- **Test Coverage**: 52/52 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范
+  - [x] 无硬编码配置值（通过 ConfigManager 获取）
+  - [x] 所有验收标准有对应测试
+  - [x] 无新外部依赖
+  - [x] 外部调用有超时、重试和错误处理
+  - [x] 无安全问题（密钥通过 SecretStr 管理）
+  - [x] ruff lint 零错误
+  - [x] mypy 类型检查通过
+  - [x] 全部 52 项单元测试通过
+  - [x] 无外部 skills 集成
+- **Known Limitations**:
+  - 免打扰时段使用 UTC 时间判断，未做北京时区转换（待后续调度器模块统一处理时区）
+  - 飞书 Webhook 签名验证未实现（需有实际飞书机器人密钥才能测试）
+- **Integrated Skills**: none
