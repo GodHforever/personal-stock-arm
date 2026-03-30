@@ -188,3 +188,5 @@ Commit format:
 | business/earnings | Completed | Sprint #14 | EarningsProcessor财报扫描+LLM摘要 (17 tests passed) |
 | business/international | Completed | Sprint #15 | InternationalBriefingGenerator隔夜市场+事件影响+日程 (17 tests passed) |
 | business/reports | Completed | Sprint #16 | ReportManager研报获取+LLM摘要+评级追踪 (17 tests passed) |
+| api | Completed | Sprint #17 | FastAPI REST API — 15+路由, 统一响应, 异步任务, 健康检查 (31 tests passed) |
+| notification | Completed | Sprint #18 | BaseNotifier + 企业微信/飞书/Email/Webhook + NotificationManager (52 tests passed) |
