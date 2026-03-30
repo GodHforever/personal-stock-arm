@@ -1,0 +1,38 @@
+## Sprint Report
+
+- **Feature Spec**: FastAPI 后端 API 层 — `specs/api/fastapi-backend.md`
+- **Files Changed**:
+  - `specs/api/fastapi-backend.md` (新增 — Feature Spec)
+  - `src/api/__init__.py` (新增 — 模块入口，导出 create_app)
+  - `src/api/app.py` (新增 — 应用工厂，CORS 中间件，全局异常处理器)
+  - `src/api/v1/__init__.py` (新增 — v1 模块入口)
+  - `src/api/v1/schemas.py` (新增 — ApiResponse、PaginatedData、ErrorCodes)
+  - `src/api/v1/router.py` (新增 — v1 主路由注册)
+  - `src/api/v1/health.py` (新增 — 健康检查路由)
+  - `src/api/v1/watchlists.py` (新增 — 自选股管理路由，含 CRUD + 股票增删)
+  - `src/api/v1/analysis.py` (新增 — 分析路由，异步任务触发/查询 + 分页结果)
+  - `src/api/v1/macro.py` (新增 — 宏观数据路由)
+  - `src/api/v1/briefings.py` (新增 — 国际简报、财报摘要、研报摘要路由)
+  - `tests/unit/api/__init__.py` (新增 — 测试模块入口)
+  - `tests/unit/api/test_api.py` (新增 — 31 个单元测试)
+- **New Dependencies**: 无（fastapi、httpx 已在 pyproject.toml 中）
+- **Test Coverage**: 31/31 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范
+  - [x] 无硬编码配置值
+  - [x] 所有验收标准有对应测试（AC-1~AC-16 全覆盖）
+  - [x] 无新增依赖
+  - [x] 统一响应格式 `{"code": 0, "data": ..., "message": "ok"}`
+  - [x] 错误码分层: 1xxx(客户端)、2xxx(数据源)、3xxx(LLM)、4xxx(系统)
+  - [x] 全局异常处理器覆盖 DataSourceError、ConfigLoadError、ValueError、未预期异常
+  - [x] 无安全问题（CORS 配置、异常信息隐藏）
+  - [x] ruff check 零错误
+  - [x] mypy 类型检查通过
+  - [x] 全部 31 个单元测试通过
+  - [x] 无外部 skill 集成
+- **Known Limitations**:
+  - 自选股和分析任务使用内存存储（MVP 阶段），后续需切换到数据库
+  - 宏观数据、简报、财报、研报路由返回空数据，后续需对接 business 层
+  - CORS 配置为全开放，生产环境需限制允许的域名
+  - 异步分析任务仅记录状态，未实际执行分析流程
+- **Integrated Skills**: 无
