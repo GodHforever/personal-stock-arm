@@ -177,3 +177,6 @@ Commit format:
 | db | Completed | Sprint #3 | Database 异步引擎 + SQLite WAL + TimestampMixin + Alembic 迁移 + SchedulerState (QA 84/100) |
 | network | Completed | Sprint #4 | NetworkClient httpx异步 + 指数退避重试 + DataSourceError 结构化异常 (QA 90/100) |
 | scheduler | Completed | Sprint #5 | TaskScheduler APScheduler异步 + 运行模式自适应 + catch-up补跑 + last_run_time持久化 (QA 82/100) |
+| data/a_share | Completed | Sprint #6 | BaseDataFetcher + DataFetcherManager failover + efinance/AkShare/Tushare/Baostock 适配器 (QA 87/100) |
+| data/international | Completed | Sprint #7 | LongbridgeFetcher + YFinanceFetcher + IntlMarketManager (47 tests passed) |
+| data/news | Completed | Sprint #8 | LongbridgeNews + RSSSource + NewsManager 多源聚合去重 (54 tests passed) |
