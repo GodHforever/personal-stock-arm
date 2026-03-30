@@ -1,0 +1,30 @@
+## Sprint Report
+
+- **Feature Spec**: specs/business/watchlist-analysis.md
+- **Files Changed**:
+  - `src/business/__init__.py` (新增)
+  - `src/business/watchlist/__init__.py` (新增)
+  - `src/business/watchlist/models.py` (新增) — WatchlistGroup, AnalysisRecord ORM 模型 + LLMVerdict, StockAnalysisResult Pydantic Schema
+  - `src/business/watchlist/manager.py` (新增) — WatchlistManager 分组 CRUD
+  - `src/business/watchlist/pipeline.py` (新增) — StockAnalysisPipeline 每日分析流水线
+  - `tests/unit/business/__init__.py` (新增)
+  - `tests/unit/business/test_watchlist.py` (新增) — 35 个单元测试
+  - `alembic/env.py` (修改) — 注册新 ORM 模型
+  - `alembic/versions/f35b7fc8e3b8_添加watchlist_group和analysis_record表.py` (新增) — 数据库迁移
+  - `specs/business/watchlist-analysis.md` (新增) — Feature Spec
+- **New Dependencies**: 无（使用已有依赖）
+- **Test Coverage**: 35/35 通过
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范
+  - [x] 无硬编码配置值（使用配置系统）
+  - [x] 所有验收标准有对应测试
+  - [x] 无新增依赖
+  - [x] 外部调用有超时/重试/错误处理（通过底层 DataFetcherManager、NewsManager、LiteLLMRouter 处理）
+  - [x] 无安全问题
+  - [x] 单元测试全部通过
+  - [x] 无使用外部 skill
+- **Known Limitations**:
+  - 调度器注册（daily_analysis 18:00）需要在应用启动入口手动注册，本 Sprint 仅实现 pipeline 逻辑
+  - LLM 结构化输出降级为文本摘要时仅取前 500 字符
+  - 新闻摘要仅拼接标题，未做 LLM 摘要提炼
+- **Integrated Skills**: 无

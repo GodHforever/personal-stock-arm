@@ -1,0 +1,25 @@
+## Sprint Report
+
+- **Feature Spec**: specs/business/earnings-processing.md
+- **Files Changed**:
+  - `src/business/earnings/__init__.py` — 模块入口，导出公共接口
+  - `src/business/earnings/models.py` — EarningsSummary 数据模型（Pydantic）
+  - `src/business/earnings/processor.py` — EarningsProcessor 财报扫描+LLM摘要生成
+  - `tests/unit/business/test_earnings.py` — 18 个单元测试
+- **New Dependencies**: none
+- **Test Coverage**: 18/18 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范（snake_case 文件名、Pydantic 模型、中文注释）
+  - [x] 无硬编码配置值
+  - [x] 所有验收标准有对应测试（AC-1 ~ AC-7 均已覆盖）
+  - [x] 无新增外部依赖
+  - [x] 外部调用有错误处理（单股票失败不阻塞）
+  - [x] 无安全问题
+  - [x] ruff check: 零错误
+  - [x] mypy: 零错误
+  - [x] 全部 18 个单元测试通过
+- **Known Limitations**:
+  - 财报数据来源依赖 NewsManager 搜索，未直接对接 akshare 财报接口（后续可扩展）
+  - LLM 摘要为非结构化 Markdown，未使用 response_schema 解析（满足当前需求）
+  - "all" 范围扫描当前仅使用自选股列表，未实现全市场扫描
+- **Integrated Skills**: none

@@ -1,0 +1,24 @@
+## Sprint Report
+
+- **Feature Spec**: specs/business/international-briefing.md
+- **Files Changed**:
+  - `src/business/international/__init__.py` — 模块入口，导出公共接口
+  - `src/business/international/models.py` — BriefingResult + MarketSnapshot 数据模型
+  - `src/business/international/briefing.py` — InternationalBriefingGenerator 简报生成器
+  - `tests/unit/business/test_international.py` — 15 个单元测试
+- **New Dependencies**: none
+- **Test Coverage**: 15/15 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范（snake_case 文件名、Pydantic 模型、中文注释）
+  - [x] 无硬编码配置值
+  - [x] 所有验收标准有对应测试（AC-1 ~ AC-7 均已覆盖）
+  - [x] 无新增外部依赖
+  - [x] 外部调用有错误处理（数据源失败降级为空数据）
+  - [x] 无安全问题
+  - [x] ruff check: 零错误
+  - [x] mypy: 零错误
+  - [x] 全部 15 个单元测试通过
+- **Known Limitations**:
+  - 未来7天日程依赖 LLM 知识生成，无专用日程数据源
+  - 简报为非结构化 Markdown，未使用 response_schema 解析
+- **Integrated Skills**: none
