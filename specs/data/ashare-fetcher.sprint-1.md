@@ -1,0 +1,35 @@
+## Sprint Report
+
+- **Feature Spec**: A股数据源适配器 (`specs/data/ashare-fetcher.md`)
+- **Files Changed**:
+  - `src/data/__init__.py` — 数据层模块入口
+  - `src/data/a_share/__init__.py` — A股数据源包入口
+  - `src/data/a_share/base.py` — BaseDataFetcher ABC + StockQuote/KlineBar/Fundamentals 数据模型 + DataUnavailableError
+  - `src/data/a_share/manager.py` — DataFetcherManager failover 编排
+  - `src/data/a_share/efinance_fetcher.py` — efinance 适配器 (priority=0)
+  - `src/data/a_share/akshare_fetcher.py` — AkShare 适配器 (priority=1)
+  - `src/data/a_share/tushare_fetcher.py` — Tushare 适配器 (priority=0, 需 token)
+  - `src/data/a_share/baostock_fetcher.py` — Baostock 适配器 (priority=3)
+  - `tests/unit/data/__init__.py` — 测试包入口
+  - `tests/unit/data/test_ashare_fetcher.py` — 32 个单元测试
+  - `pyproject.toml` — 新增 mypy 第三方库 ignore_missing_imports 配置
+- **New Dependencies**: efinance, akshare, tushare, baostock（均为运行时可选依赖，import 失败时优雅降级）
+- **Test Coverage**: 32/32 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范
+  - [x] 无硬编码配置值（Tushare token 通过 ConfigManager 获取）
+  - [x] 所有 AC 有对应测试
+  - [x] 新依赖为可选运行时依赖，不需添加到 requirements.txt
+  - [x] 外部调用有错误处理（DataSourceError 结构化异常）
+  - [x] 无安全问题（无暴露的 API Key、无注入风险）
+  - [x] Lint 通过（ruff check: All checks passed!）
+  - [x] 类型检查通过（mypy: Success, 0 errors）
+  - [x] 所有单元测试通过（32/32）
+  - [x] 无外部 skills 集成
+- **Known Limitations**:
+  - pytdx 未实现（按设计文档要求，复杂度高优先级低，后续按需添加）
+  - efinance 不支持基本面查询，会 fallback 到其他源
+  - Baostock 不支持实时行情，会 fallback 到其他源
+  - Baostock get_fundamentals 返回基本空对象（其 API 返回格式复杂，需后续完善解析）
+  - Tushare 需要 Pro Token，无 token 时该源自动跳过
+- **Integrated Skills**: none
