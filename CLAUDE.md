@@ -180,3 +180,6 @@ Commit format:
 | data/a_share | Completed | Sprint #6 | BaseDataFetcher + DataFetcherManager failover + efinance/AkShare/Tushare/Baostock 适配器 (QA 87/100) |
 | data/international | Completed | Sprint #7 | LongbridgeFetcher + YFinanceFetcher + IntlMarketManager (47 tests passed) |
 | data/news | Completed | Sprint #8 | LongbridgeNews + RSSSource + NewsManager 多源聚合去重 (54 tests passed) |
+| analysis/llm | Completed | Sprint #9 | LiteLLMRouter + PromptManager + TokenBudgetTracker + 结构化输出 (36 tests passed) |
+| analysis/technical | Completed | Sprint #10 | MA/MACD/RSI/成交量 指标计算 + TechnicalAnalyzer 多空评分 (29 tests passed) |
+| analysis/skills | Completed | Sprint #11 | BaseSkillAdapter + SkillRegistry + YAML策略加载器 (21 tests passed) |
