@@ -1,0 +1,15 @@
+[Unit]
+Description=Stock-ARM 金融分析服务
+After=network.target
+
+[Service]
+Type=simple
+User=%i
+WorkingDirectory=/opt/stock-arm
+ExecStart=/opt/stock-arm/.venv/bin/python main.py --daemon
+Restart=on-failure
+RestartSec=10
+EnvironmentFile=/opt/stock-arm/.env
+
+[Install]
+WantedBy=multi-user.target
