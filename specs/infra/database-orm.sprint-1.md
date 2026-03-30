@@ -1,0 +1,31 @@
+## Sprint Report
+
+- **Feature Spec**: 数据库与ORM基础设施 (`specs/infra/database-orm.md`)
+- **Files Changed**:
+  - `src/db/__init__.py` — 模块公开接口（导出 Database, Base, TimestampMixin, SchedulerState）
+  - `src/db/base.py` — DeclarativeBase + TimestampMixin（id, created_at, updated_at）
+  - `src/db/engine.py` — Database 类（异步引擎、WAL 模式、会话工厂）
+  - `src/db/models.py` — SchedulerState 数据模型
+  - `alembic.ini` — Alembic 配置文件
+  - `alembic/env.py` — 异步 Alembic 迁移环境
+  - `alembic/script.py.mako` — 迁移脚本模板
+  - `alembic/versions/766c657a5db8_初始迁移_scheduler_state表.py` — 初始迁移脚本
+  - `tests/unit/test_database.py` — 20 个单元测试
+  - `specs/infra/database-orm.md` — Feature Spec
+- **New Dependencies**: 无（sqlalchemy[asyncio], aiosqlite, alembic 已在 requirements.txt 中）
+- **Test Coverage**: 20/20 通过
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范（snake_case 命名、中文注释、from __future__ import annotations）
+  - [x] 无硬编码配置值（使用 ConfigManager）
+  - [x] 所有验收标准有对应测试
+  - [x] 无新依赖需要添加
+  - [x] 外部调用有错误处理（session 自动回滚）
+  - [x] 无安全问题
+  - [x] Lint 零错误（ruff check src/db/ — All checks passed!）
+  - [x] 类型检查通过（mypy src/db/ — Success: no issues found in 4 source files）
+  - [x] 所有单元测试通过（20/20）
+  - [x] 无外部技能集成
+- **Known Limitations**:
+  - WAL 模式在内存数据库 (`:memory:`) 中不生效（返回 `memory` 而非 `wal`），测试中已处理此情况
+  - Database 类目前为实例模式，未实现单例；上层应用需自行管理生命周期
+- **Integrated Skills**: 无
