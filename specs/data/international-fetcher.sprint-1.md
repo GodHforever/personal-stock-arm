@@ -1,0 +1,30 @@
+## Sprint Report
+
+- **Feature Spec**: 国际市场数据适配器 (`specs/data/international-fetcher.md`)
+- **Files Changed**:
+  - `specs/data/international-fetcher.md` (新增 — Feature Spec)
+  - `src/data/international/__init__.py` (新增 — 模块入口)
+  - `src/data/international/base.py` (新增 — 数据模型与抽象基类)
+  - `src/data/international/longbridge_fetcher.py` (新增 — Longbridge SDK 适配器)
+  - `src/data/international/yfinance_fetcher.py` (新增 — yfinance fallback 适配器)
+  - `src/data/international/manager.py` (新增 — 国际市场数据管理器)
+  - `tests/unit/data/test_international_fetcher.py` (新增 — 47 个单元测试)
+- **New Dependencies**: longbridge, yfinance（均已安装，为可选依赖）
+- **Test Coverage**: 47/47 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范
+  - [x] 无硬编码配置值（Longbridge client_id 通过 ConfigManager 获取）
+  - [x] 所有 AC 均有对应测试覆盖
+  - [x] 无新增依赖需要添加（longbridge、yfinance 已在 requirements.txt）
+  - [x] 外部调用有 timeout、retry（rate limit）和错误处理
+  - [x] 无安全问题（无暴露 API key、无注入风险）
+  - [x] ruff check 零错误通过
+  - [x] mypy 类型检查通过
+  - [x] 全部 47 个单元测试通过
+  - [x] 外部 SDK 适配器均有独立测试
+- **Known Limitations**:
+  - yfinance fallback 仅支持 US 市场，HK/SG 无 fallback
+  - Longbridge OAuth 首次认证需要浏览器交互（SDK 限制）
+  - yfinance 的 `get_market_indices` 不含恒生科技指数（yfinance 不支持 `.HSTECH.HK`）
+  - DataConfig 模型未添加 `longbridge_client_id` 字段（需在后续 config 模块迭代中补充）
+- **Integrated Skills**: Longbridge Python SDK（通过 `longbridge.openapi` 包集成）
