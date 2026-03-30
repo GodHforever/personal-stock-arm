@@ -1,0 +1,26 @@
+## Sprint Report
+
+- **Feature Spec**: 网络请求层 (NetworkClient) — `specs/infra/network-client.md`
+- **Files Changed**:
+  - `specs/infra/network-client.md` (新增 — Feature Spec)
+  - `src/network/__init__.py` (修改 — 导出 NetworkClient, DataSourceError)
+  - `src/network/errors.py` (新增 — DataSourceError 结构化异常)
+  - `src/network/client.py` (新增 — NetworkClient HTTP 客户端)
+  - `tests/unit/test_network_client.py` (新增 — 27 个单元测试)
+- **New Dependencies**: 无（httpx 已在 requirements.txt 中）
+- **Test Coverage**: 27/27 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范
+  - [x] 无硬编码配置值（使用 ConfigManager）
+  - [x] 所有验收标准有对应测试（AC-1~AC-10 全覆盖）
+  - [x] 无新增依赖
+  - [x] 外部调用有超时、重试和错误处理
+  - [x] 无安全问题
+  - [x] ruff check 零错误
+  - [x] mypy 类型检查通过
+  - [x] 全部 27 个单元测试通过
+  - [x] 无外部 skill 集成
+- **Known Limitations**:
+  - 当前仅支持 GET 和 POST 方法，其他 HTTP 方法可按需扩展
+  - 代理认证（用户名/密码）未支持，当前仅支持简单代理 URL
+- **Integrated Skills**: 无
