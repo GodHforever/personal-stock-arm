@@ -1,0 +1,24 @@
+## Sprint Report
+
+- **Feature Spec**: task-scheduler (specs/infra/task-scheduler.md)
+- **Files Changed**:
+  - `src/scheduler/__init__.py` — 导出 TaskScheduler
+  - `src/scheduler/scheduler.py` — TaskScheduler 类（APScheduler AsyncIOScheduler 封装）
+  - `src/scheduler/jobs.py` — 6 个 stub 任务函数
+  - `tests/unit/test_scheduler.py` — 34 个单元测试
+- **New Dependencies**: none（apscheduler 已在 requirements.txt 中）
+- **Test Coverage**: 34/34 passed
+- **Self-Check Results**:
+  - [pass] 代码遵循 CLAUDE.md 编码约定
+  - [pass] 无硬编码配置值（从 SchedulerConfig 读取）
+  - [pass] 所有验收标准有对应测试
+  - [pass] 新依赖已在 requirements.txt 中
+  - [pass] Lint 零错误: ruff check src/scheduler/ — All checks passed
+  - [pass] 类型检查通过: mypy src/scheduler/ — Success (APScheduler import 加 type: ignore)
+  - [pass] 单元测试通过: pytest — 34 passed in 5.04s
+  - [pass] 无安全问题
+- **Known Limitations**:
+  - 交易日检查仅基于星期几（周末跳过），未接入中国股市交易日历（需 Layer 2 数据源支持）
+  - stub 任务函数仅打印日志，实际业务逻辑在 Layer 4 实现时替换
+  - catch-up 机制在内存 SQLite 中测试，生产环境使用文件数据库
+- **Integrated Skills**: none
