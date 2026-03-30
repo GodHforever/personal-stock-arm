@@ -252,11 +252,7 @@ class TestMacroTrackerPull:
         self, mock_db: AsyncMock, mock_llm: AsyncMock
     ) -> None:
         """AC-4: 成功拉取单个指标。"""
-        import pandas as pd
-
-        mock_df = pd.DataFrame(
-            {"日期": ["2026-03-01"], "同比增长": [2.1]}
-        )
+        now = datetime.datetime(2026, 3, 1)
 
         # 模拟数据库无前值记录
         session = AsyncMock()
@@ -267,6 +263,9 @@ class TestMacroTrackerPull:
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
 
+        async def fake_fetch(indicator_def):
+            return 2.1, now
+
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
                 name="CPI",
@@ -276,10 +275,7 @@ class TestMacroTrackerPull:
                 unit="%",
                 value_column="同比增长",
             ),
-        ]), patch(
-            "src.business.macro.tracker.asyncio.to_thread",
-            return_value=mock_df,
-        ):
+        ]), patch.object(tracker, "_fetch_from_akshare", side_effect=fake_fetch):
             results = await tracker.pull_daily_indicators()
 
         assert len(results) == 1
@@ -292,11 +288,7 @@ class TestMacroTrackerPull:
         self, mock_db: AsyncMock, mock_llm: AsyncMock
     ) -> None:
         """AC-5: 拉取后与前值比较，计算 change 和 change_pct。"""
-        import pandas as pd
-
-        mock_df = pd.DataFrame(
-            {"日期": ["2026-03-01"], "同比增长": [2.5]}
-        )
+        now = datetime.datetime(2026, 3, 1)
 
         # 模拟数据库有前值记录
         prev_record = MagicMock(spec=MacroRecord)
@@ -312,6 +304,9 @@ class TestMacroTrackerPull:
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
 
+        async def fake_fetch(indicator_def):
+            return 2.5, now
+
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
                 name="CPI",
@@ -321,10 +316,7 @@ class TestMacroTrackerPull:
                 unit="%",
                 value_column="同比增长",
             ),
-        ]), patch(
-            "src.business.macro.tracker.asyncio.to_thread",
-            return_value=mock_df,
-        ):
+        ]), patch.object(tracker, "_fetch_from_akshare", side_effect=fake_fetch):
             results = await tracker.pull_daily_indicators()
 
         assert len(results) == 1
@@ -339,11 +331,6 @@ class TestMacroTrackerPull:
         self, mock_db: AsyncMock, mock_llm: AsyncMock
     ) -> None:
         """AC-7: 当日无更新时标注暂无更新。"""
-        import pandas as pd
-
-        # 返回空 DataFrame 表示无更新
-        mock_df = pd.DataFrame()
-
         prev_record = MagicMock(spec=MacroRecord)
         prev_record.current_value = 2.0
         prev_record.previous_value = 1.8
@@ -357,6 +344,9 @@ class TestMacroTrackerPull:
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
 
+        async def fake_fetch(indicator_def):
+            return None, None  # 无更新
+
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
                 name="CPI",
@@ -366,10 +356,7 @@ class TestMacroTrackerPull:
                 unit="%",
                 value_column="同比增长",
             ),
-        ]), patch(
-            "src.business.macro.tracker.asyncio.to_thread",
-            return_value=mock_df,
-        ):
+        ]), patch.object(tracker, "_fetch_from_akshare", side_effect=fake_fetch):
             results = await tracker.pull_daily_indicators()
 
         assert len(results) == 1
@@ -382,18 +369,7 @@ class TestMacroTrackerPull:
         self, mock_db: AsyncMock, mock_llm: AsyncMock
     ) -> None:
         """AC-8: 单个指标拉取失败不影响其他指标。"""
-        import pandas as pd
-
-        good_df = pd.DataFrame({"日期": ["2026-03-01"], "同比增长": [2.1]})
-
-        call_count = 0
-
-        async def mock_to_thread(func, **kwargs):
-            nonlocal call_count
-            call_count += 1
-            if call_count == 1:
-                raise ConnectionError("网络不可达")
-            return good_df
+        now = datetime.datetime(2026, 3, 1)
 
         session = AsyncMock()
         mock_result = MagicMock()
@@ -402,6 +378,15 @@ class TestMacroTrackerPull:
         mock_db = _make_db_mock(session)
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
+
+        call_count = 0
+
+        async def fake_fetch(indicator_def):
+            nonlocal call_count
+            call_count += 1
+            if call_count == 1:
+                raise ConnectionError("网络不可达")
+            return 2.1, now
 
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
@@ -420,10 +405,7 @@ class TestMacroTrackerPull:
                 unit="%",
                 value_column="同比增长",
             ),
-        ]), patch(
-            "src.business.macro.tracker.asyncio.to_thread",
-            side_effect=mock_to_thread,
-        ), patch("akshare.macro_china_ppi_monthly", create=True):
+        ]), patch.object(tracker, "_fetch_from_akshare", side_effect=fake_fetch):
             results = await tracker.pull_daily_indicators()
 
         assert len(results) == 2
@@ -439,12 +421,13 @@ class TestMacroTrackerPull:
         self, mock_db: AsyncMock, mock_llm: AsyncMock
     ) -> None:
         """AC-8: 拉取超时时记录错误。"""
-        import asyncio
-
-        async def slow_fetch(*args, **kwargs):
-            await asyncio.sleep(100)  # 故意很慢
+        import asyncio as aio
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
+
+        async def slow_fetch(indicator_def):
+            await aio.sleep(100)
+            return 0.0, None
 
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
@@ -457,10 +440,7 @@ class TestMacroTrackerPull:
             ),
         ]), patch(
             "src.business.macro.tracker._FETCH_TIMEOUT", 0.01,
-        ), patch(
-            "src.business.macro.tracker.asyncio.to_thread",
-            side_effect=slow_fetch,
-        ):
+        ), patch.object(tracker, "_fetch_from_akshare", side_effect=slow_fetch):
             results = await tracker.pull_daily_indicators()
 
         assert len(results) == 1
@@ -551,11 +531,7 @@ class TestMacroTrackerRunDaily:
         self, mock_db: AsyncMock, mock_llm: AsyncMock
     ) -> None:
         """AC-4 + AC-6: run_daily 执行拉取 + 分析。"""
-        import pandas as pd
-
-        mock_df = pd.DataFrame(
-            {"日期": ["2026-03-01"], "同比增长": [2.1]}
-        )
+        now = datetime.datetime(2026, 3, 1)
 
         session = AsyncMock()
         mock_result = MagicMock()
@@ -564,6 +540,9 @@ class TestMacroTrackerRunDaily:
         mock_db = _make_db_mock(session)
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
+
+        async def fake_fetch(indicator_def):
+            return 2.1, now
 
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
@@ -574,10 +553,7 @@ class TestMacroTrackerRunDaily:
                 unit="%",
                 value_column="同比增长",
             ),
-        ]), patch(
-            "src.business.macro.tracker.asyncio.to_thread",
-            return_value=mock_df,
-        ):
+        ]), patch.object(tracker, "_fetch_from_akshare", side_effect=fake_fetch):
             indicators, analysis = await tracker.run_daily()
 
         assert len(indicators) == 1
@@ -594,11 +570,7 @@ class TestMacroTrackerDbUpdate:
         self, mock_db: AsyncMock, mock_llm: AsyncMock
     ) -> None:
         """AC-5: 首次拉取时创建数据库记录。"""
-        import pandas as pd
-
-        mock_df = pd.DataFrame(
-            {"日期": ["2026-03-01"], "同比增长": [2.1]}
-        )
+        now = datetime.datetime(2026, 3, 1)
 
         session = AsyncMock()
         mock_result = MagicMock()
@@ -607,6 +579,9 @@ class TestMacroTrackerDbUpdate:
         mock_db = _make_db_mock(session)
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
+
+        async def fake_fetch(indicator_def):
+            return 2.1, now
 
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
@@ -617,10 +592,7 @@ class TestMacroTrackerDbUpdate:
                 unit="%",
                 value_column="同比增长",
             ),
-        ]), patch(
-            "src.business.macro.tracker.asyncio.to_thread",
-            return_value=mock_df,
-        ):
+        ]), patch.object(tracker, "_fetch_from_akshare", side_effect=fake_fetch):
             results = await tracker.pull_daily_indicators()
 
         # 验证 session.add 被调用（新建记录）
@@ -636,11 +608,7 @@ class TestMacroTrackerDbUpdate:
         self, mock_db: AsyncMock, mock_llm: AsyncMock
     ) -> None:
         """AC-5: 已有记录时更新：当前值变前值，新值写入。"""
-        import pandas as pd
-
-        mock_df = pd.DataFrame(
-            {"日期": ["2026-03-01"], "同比增长": [2.5]}
-        )
+        now = datetime.datetime(2026, 3, 1)
 
         # 模拟已有记录
         existing = MagicMock(spec=MacroRecord)
@@ -655,6 +623,9 @@ class TestMacroTrackerDbUpdate:
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
 
+        async def fake_fetch(indicator_def):
+            return 2.5, now
+
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
                 name="CPI",
@@ -664,10 +635,7 @@ class TestMacroTrackerDbUpdate:
                 unit="%",
                 value_column="同比增长",
             ),
-        ]), patch(
-            "src.business.macro.tracker.asyncio.to_thread",
-            return_value=mock_df,
-        ):
+        ]), patch.object(tracker, "_fetch_from_akshare", side_effect=fake_fetch):
             results = await tracker.pull_daily_indicators()
 
         # 验证记录被更新
