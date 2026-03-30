@@ -123,6 +123,7 @@ Layer 1 (Infrastructure):
   ├── Config management system
   ├── Database & ORM (SQLAlchemy + Alembic)
   ├── Network request layer (NetworkClient)
+  ├── Task scheduler (APScheduler, runtime mode adaptation)
   └── Logging system
 
 Layer 2 (Data):
@@ -144,7 +145,7 @@ Layer 4 (Business):
 
 Layer 5 (Presentation):
   ├── FastAPI backend API
-  ├── React frontend (Web/PWA)
+  ├── React frontend (Web)
   └── Bot push integration
 
 Layer 6 (Enhancement, optional):

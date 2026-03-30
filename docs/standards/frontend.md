@@ -9,7 +9,7 @@
 ### Tech Stack
 - React 18 + TypeScript 5 + Vite
 - State management: Zustand
-- Charts: ECharts (financial chart ecosystem)
+- Charts: ECharts (lightweight use, analysis result visualization only)
 - HTTP client: Axios (wrapped in `src/api/`)
 - Styling: CSS Modules or Tailwind CSS
 
@@ -23,8 +23,6 @@ web/
 │   │   ├── analysis.ts   # Analysis API calls
 │   │   └── types.ts      # Request/response TypeScript types
 │   ├── components/       # Reusable UI components
-│   │   ├── StockChart.tsx
-│   │   ├── MacroChart.tsx
 │   │   └── ...
 │   ├── pages/            # Page-level components (route targets)
 │   │   ├── Home.tsx
@@ -50,21 +48,18 @@ web/
 ## 2. Design Rules
 
 ### Responsive Design
-- Must work on both desktop (1280px+) and mobile (360px+) viewports
-- PWA-ready: includes `manifest.json`, service worker for offline shell
-- Mobile-first breakpoints: base mobile → `md:` tablet → `lg:` desktop
+- Desktop-oriented layout (1280px+ primary viewport)
+- Reasonable display at 1024px minimum width
 
 ### Theme Support
 - Light and dark themes (mandatory for financial tool)
 - Theme persisted in localStorage
 - CSS custom properties for theme values (colors, backgrounds, borders)
 
-### Charts (ECharts)
-- All financial charts use ECharts
-- Candlestick charts for K-line data
-- Line charts for macro trend data
+### Charts (ECharts, lightweight)
+- Used for displaying analysis result summaries and simple data visualizations
+- Not used for raw K-line or macro trend rendering (data fetched on-demand, not stored)
 - Chart components accept data via props, handle their own rendering
-- Responsive: charts resize on window resize
 
 ### API Communication
 - All API calls go through `src/api/client.ts`

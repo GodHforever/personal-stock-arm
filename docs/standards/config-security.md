@@ -28,6 +28,9 @@ Categories:
   DB_     — Database config
   NET_    — Network config (proxy, timeouts)
   UI_     — Frontend/display config
+  AUTH_   — Authentication config (cloud mode)
+  SCHEDULER_ — Task scheduler config
+  BACKUP_ — Data backup config (cloud mode)
 
 Examples:
   STOCK_ARM_LLM_API_KEY=sk-xxx
@@ -36,6 +39,10 @@ Examples:
   STOCK_ARM_PUSH_WECHAT_WEBHOOK_URL=https://...
   STOCK_ARM_NET_PROXY=socks5://127.0.0.1:1080
   STOCK_ARM_NET_CONNECT_TIMEOUT=5
+  STOCK_ARM_AUTH_ENABLED=true
+  STOCK_ARM_AUTH_USERNAME=admin
+  STOCK_ARM_SCHEDULER_ENABLED=true
+  STOCK_ARM_SCHEDULE_DAILY_ANALYSIS=18:00
 ```
 
 ### .env.example Template
@@ -56,6 +63,30 @@ STOCK_ARM_LLM_DAILY_TOKEN_LIMIT=500000     # Daily token budget (0=unlimited)
 # ===== Data Sources =====
 STOCK_ARM_DATA_TUSHARE_TOKEN=    # Optional: Tushare Pro token
 # ...
+
+# ===== Runtime =====
+STOCK_ARM_RUNTIME_ENV=auto       # auto | cloud | docker | local
+
+# ===== Cloud Mode (only when RUNTIME_ENV=cloud) =====
+STOCK_ARM_AUTH_ENABLED=false     # Enable password auth for Web UI
+STOCK_ARM_AUTH_USERNAME=admin
+STOCK_ARM_AUTH_PASSWORD=         # Required if auth enabled
+STOCK_ARM_SSL_CERT_PATH=        # Optional: path to SSL certificate
+STOCK_ARM_SSL_KEY_PATH=         # Optional: path to SSL private key
+STOCK_ARM_BACKUP_ENABLED=false  # Optional: scheduled DB backup
+STOCK_ARM_BACKUP_PATH=          # Backup destination directory
+STOCK_ARM_BACKUP_CRON=0 3 * * * # Backup schedule (cron format)
+
+# ===== Scheduler =====
+STOCK_ARM_SCHEDULER_ENABLED=true
+STOCK_ARM_SCHEDULE_DAILY_ANALYSIS=18:00
+STOCK_ARM_SCHEDULE_DAILY_MACRO=18:30
+STOCK_ARM_SCHEDULE_DAILY_BRIEFING=19:00
+STOCK_ARM_SCHEDULE_EARNINGS_SCAN=20:00
+STOCK_ARM_SCHEDULE_MONTHLY_REPORT=09:00
+STOCK_ARM_TRADING_DAY_CHECK=true
+STOCK_ARM_DATA_RETENTION_DAYS=90       # Auto-cleanup data older than this
+STOCK_ARM_CLEANUP_CRON=0 3 1 * *       # Cleanup schedule
 ```
 
 ### config.yaml Format
@@ -75,6 +106,22 @@ push:
   schedule_time: "18:00"
   silent_start: "22:00"
   silent_end: "08:00"
+
+scheduler:
+  enabled: true
+  daily_analysis: "18:00"
+  daily_macro: "18:30"
+  daily_briefing: "19:00"
+  earnings_scan: "20:00"
+  monthly_report: "09:00"
+  trading_day_check: true
+  data_retention_days: 90
+  cleanup_cron: "0 3 1 * *"
+
+cloud:
+  auth_enabled: false
+  backup_enabled: false
+  backup_cron: "0 3 * * *"
 
 analysis:
   max_workers: 3

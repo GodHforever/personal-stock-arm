@@ -56,8 +56,29 @@ class BaseNotifier(ABC):
 | Tier | Channel | Content |
 |------|---------|---------|
 | Summary | Bot (WeChat/Feishu) | Key signals, 1-2 sentence per stock |
-| Standard | Web UI | Full analysis with charts |
+| Standard | Web UI | Full analysis results |
 | Detailed | Email | Complete report with attachments |
+
+### Document Forwarding (on-demand)
+
+When a user is interested in a specific earnings report or research report original:
+1. User clicks "forward original" in Web UI
+2. Backend fetches the original document from its source on-demand (not pre-stored)
+3. Document is sent to user's configured notification channel:
+   - **Email**: as attachment (PDF/HTML)
+   - **WeChat/Feishu**: as file message (if supported) or download link
+4. Original document is NOT stored locally after forwarding
+
+### Push Behavior by Runtime Mode
+
+| Scenario | Cloud/Docker (7×24) | Local (on-demand) |
+|----------|--------------------|--------------------|
+| Daily scheduled | Auto-push at cron time | On startup: push if today not yet pushed |
+| Event alerts | Real-time push | Push only while program is running |
+| Monthly report | Auto-generate and push | On startup: check if month's report exists, push if not |
+| Backfill (catch-up) | N/A | Results stored in Web UI only, **never pushed** (avoid spam) |
+
+Key rule: **Local mode catch-up tasks must NOT trigger push notifications.** Only live (real-time) task executions push to channels.
 
 ## 3. Configuration
 

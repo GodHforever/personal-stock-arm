@@ -62,6 +62,7 @@ The paradigm is not just documentation — it is **enforced by automated tooling
 - **FastAPI**: 0.110+
 - **React**: 18 + TypeScript 5 + Vite
 - **Database**: SQLite (WAL mode)
+- **Task Scheduler**: APScheduler (cloud=continuous, local=catch-up+live)
 - **LLM Router**: LiteLLM
 - **Charts**: ECharts
 - **State Management**: Zustand
@@ -104,6 +105,7 @@ personal-stock-arm/
 ├── data/                      # SQLite DB & runtime data (gitignored)
 ├── config/                    # User config (gitignored)
 ├── build/                     # Packaging scripts
+├── deploy/                    # Deployment configs (systemd service, etc.)
 ├── docker-compose.yml         # Docker deployment
 ├── Dockerfile                 # Container build
 ├── pyproject.toml             # Python project metadata
@@ -132,8 +134,10 @@ personal-stock-arm/
 
 - ORM: SQLAlchemy 2.0+ (async)
 - Migrations: Alembic
-- Table naming: `snake_case`, singular (e.g., `stock_daily`, `analysis_record`)
+- Table naming: `snake_case`, singular (e.g., `analysis_record`, `scheduler_state`)
 - All tables must have `id` (primary key), `created_at`, `updated_at`
+- **Storage principle**: Only persist data that cannot be re-fetched (user config, analysis results, scheduler state, LLM logs). Raw market data, news originals, and document files are NOT stored locally.
+- Scheduled data cleanup: old records beyond retention period auto-deleted monthly
 
 ## Test Conventions
 

@@ -67,15 +67,15 @@ Each technology choice is documented with alternatives considered and reasoning.
 - Token counting and cost tracking
 - Lighter than LangChain (no unnecessary abstractions)
 
-### Charts: ECharts
+### Charts: ECharts (lightweight use)
 
 **Chosen over**: Recharts, Chart.js, D3
 
 **Reasoning**:
-- Native financial chart types (candlestick, K-line)
-- Best Chinese language support (labels, tooltips)
-- Rich interactive features (zoom, crosshair, data views)
-- Large ecosystem with financial chart examples
+- Used only for displaying analysis result summaries and simple data visualizations in Web UI
+- Not used for K-line candlestick or macro trend charts (raw data fetched on-demand from data sources, not stored locally)
+- Best Chinese language support
+- Rich interactive features
 
 ### State Management: Zustand
 
@@ -108,3 +108,17 @@ Each technology choice is documented with alternatives considered and reasoning.
 - Single `docker-compose up` for users who prefer containers
 - Multi-stage build keeps image small
 - Development override for hot reload
+
+### Task Scheduler: APScheduler
+
+**Chosen over**: Celery, Huey, system cron
+
+**Reasoning**:
+- In-process scheduler — no external broker (Redis/RabbitMQ) required
+- Supports cron expressions for flexible scheduling
+- Supports both persistent (cloud 7×24) and transient (local on-demand) modes
+- Job state can be stored in SQLite (same DB, no extra infrastructure)
+- Lightweight — single pip package, no background workers
+- Handles missed job catch-up natively (misfire_grace_time)
+
+**Use case**: Unified scheduler for daily analysis, macro data pull, briefing generation, earnings scan, and monthly reports. Adapts behavior based on runtime mode (cloud=continuous, local=catch-up+live).

@@ -13,7 +13,7 @@
 │   Trade Interface Framework │ Backtesting │ Multi-Vote  │
 ├─────────────────────────────────────────────────────────┤
 │ Layer 5: Presentation                                   │
-│   FastAPI Backend │ React Frontend (PWA) │ Bot Push     │
+│   FastAPI Backend │ React Frontend │ Bot Push     │
 ├─────────────────────────────────────────────────────────┤
 │ Layer 4: Business Logic                                 │
 │   Watchlist │ Macro │ Earnings │ Intl Finance │ Reports │
@@ -25,7 +25,7 @@
 │   A-share Fetchers │ Intl Market Fetchers │ News/Sentiment│
 ├─────────────────────────────────────────────────────────┤
 │ Layer 1: Infrastructure                                 │
-│   Config │ Database/ORM │ NetworkClient │ Logging       │
+│   Config │ Database/ORM │ NetworkClient │ Scheduler │ Log│
 └─────────────────────────────────────────────────────────┘
 ```
 
@@ -38,8 +38,9 @@
 | Module | Responsibility | Key Classes/Components |
 |--------|---------------|----------------------|
 | Config | Load and manage all configuration | `ConfigManager`, `.env` parsing, `config.yaml` loading |
-| Database | SQLAlchemy ORM, Alembic migrations, session management | `Database`, model base classes, `async_sessionmaker` |
+| Database | SQLAlchemy ORM, Alembic migrations, session management. Only stores user config, analysis results, scheduler state, LLM logs — no raw market data | `Database`, model base classes, `async_sessionmaker` |
 | NetworkClient | Unified HTTP client with timeout, retry, proxy, error reporting | `NetworkClient`, `DataSourceError` |
+| TaskScheduler | Unified task scheduling, adapts to runtime mode (cloud/local) | `TaskScheduler`, APScheduler, `last_run_time` tracking |
 | Logging | Structured logging with level control | `setup_logging()`, formatters |
 
 **Dependencies**: None (foundation layer)
@@ -72,8 +73,8 @@
 | Module | Responsibility | Key Classes/Components |
 |--------|---------------|----------------------|
 | Watchlist | Stock group management, daily analysis pipeline | `WatchlistManager`, `StockAnalysisPipeline` |
-| Macro Data | Macro indicator tracking, chart generation, LLM commentary | `MacroTracker`, indicator processors |
-| Earnings | Earnings report scanning, PDF download, LLM summarization | `EarningsProcessor`, summary generators |
+| Macro Data | Macro indicator tracking (latest+previous value only), LLM commentary | `MacroTracker`, indicator processors |
+| Earnings | Earnings report scanning, LLM summarization, on-demand document forwarding | `EarningsProcessor`, summary generators |
 | Intl Finance | International briefing generation | `InternationalBriefingGenerator` |
 | Research Reports | Report download, LLM summary, rating tracking | `ReportManager`, broker scrapers |
 
@@ -84,7 +85,7 @@
 | Module | Responsibility | Key Classes/Components |
 |--------|---------------|----------------------|
 | FastAPI Backend | REST API endpoints, SSE streaming, static file serving | Route handlers, middleware, Pydantic schemas |
-| React Frontend | Web UI with PWA support | Pages, components, stores, API client |
+| React Frontend | Web UI | Pages, components, stores, API client |
 | Bot Push | Notification channel integration | `BaseNotifier`, channel implementations |
 
 **Dependencies**: Layers 1-4
@@ -118,6 +119,7 @@ src/
 ├── config/           # Layer 1: Configuration
 ├── db/               # Layer 1: Database & ORM
 ├── network/          # Layer 1: Network client
+├── scheduler/        # Layer 1: Task scheduler
 ├── logging/          # Layer 1: Logging setup
 ├── data/             # Layer 2: Data fetchers
 │   ├── a_share/      # A-share data sources

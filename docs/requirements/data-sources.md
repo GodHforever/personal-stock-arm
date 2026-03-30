@@ -141,14 +141,18 @@ Degradation: on scraping failure, fallback to search engine API
 
 ### Processing Flow
 
-1. Daily scheduled pull → Store in database → Compare with previous value / expected value
-2. Generate trend charts (line charts with key inflection points annotated)
-3. LLM analyzes current data's meaning and market impact
-4. If no update available today: annotate "No update" with last available date and value
-5. Push summary to notification channels
+1. Daily scheduled pull → Compare with previous value / expected value (store only latest value + previous value, not full history)
+2. LLM analyzes current data's meaning and market impact
+3. If no update available today: annotate "No update" with last available date and value
+4. Push summary to notification channels
 
 ### Data Freshness Rules
 - Daily indicators: pull after market close (18:00 default)
 - Monthly indicators: pull on release day (usually 10th-15th of month)
 - Event-driven: poll financial calendar daily, trigger on event day
 - All indicators: display "last updated" timestamp alongside value
+
+### Scheduling
+- Registered as `daily_macro` in TaskScheduler (daily 18:30)
+- Cloud mode: auto-pull every trading day
+- Local mode: on startup, pull if today's macro data not yet fetched; user can backfill via Web UI

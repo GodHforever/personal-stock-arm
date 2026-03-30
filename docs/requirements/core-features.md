@@ -8,19 +8,19 @@
 
 ### Watchlist Groups
 - Support multiple watchlist groups (e.g., "Long-term Holdings", "Short-term Watch", "Sector Tracking")
-- Each group can have its own analysis strategy and push frequency
+- Each group can have its own analysis strategy and push frequency（默认推送频率为0）
 - Import methods: manual text input, CSV file, image (OCR stock code recognition)
 
 ### Daily Analysis per Stock
 
 | Dimension | Content | Data Source |
 |-----------|---------|------------|
-| Technical | MA trends, MACD, RSI, volume-price relationship, support/resistance levels | DataFetcherManager |
-| Fundamental | PE/PB/ROE, latest financial data summary | DataFetcherManager |
-| News | Related news, announcements, research report summaries | News/Sentiment sources |
-| Capital Flow | Main force capital flow, chip distribution (optional) | DataFetcherManager |
+| Technical | MA trends, MACD, RSI, volume-price relationship, support/resistance levels | DataFetcherManager (real-time fetch, not stored) |
+| Fundamental | PE/PB/ROE, latest financial data summary | DataFetcherManager (real-time fetch) |
+| News | Related news, announcements, research report summaries | News/Sentiment sources (summarize and discard originals) |
+| Capital Flow | Main force capital flow, chip distribution (optional) | DataFetcherManager (real-time fetch) |
 | LLM Synthesis | Bull/bear verdict, key risk alerts, operation advice | LLM Provider |
-| Delta | Signal changes compared to previous trading day | Database (historical) |
+| Delta | Signal changes compared to previous trading day | Database (historical analysis results) |
 
 ### Output Format
 Each stock produces a structured analysis result:
@@ -37,9 +37,12 @@ StockAnalysisResult:
   - signal_changes: list[SignalChange]
 ```
 
----
+### Scheduling
+- Registered as `daily_analysis` in TaskScheduler (daily 18:00)
+- Cloud mode: auto-trigger every trading day
+- Local mode: on startup, auto-run if today's analysis not yet executed; user can manually backfill date ranges via Web UI (backfill results not pushed)
 
-## 2. Earnings Season Tracking (财报季跟踪)
+---
 
 ### Trigger Periods
 - **April**: Annual report + Q1 report (高频期)
@@ -53,10 +56,7 @@ StockAnalysisResult:
    Source: AkShare / East Money
    Filter: all A-share companies, or only watchlist stocks (configurable)
 
-2. Download PDF original (optional, configurable)
-   Storage: data/earnings/<date>/<stock_code>.pdf
-
-3. LLM generates earnings summary:
+2. LLM generates earnings summary:
    - Core business composition and changes
    - Key financial metrics:
      * Revenue, Net Profit, Non-GAAP Net Profit
@@ -65,20 +65,23 @@ StockAnalysisResult:
    - YoY / QoQ changes and trends
    - Highlights and risk alerts
 
-4. Store summary as Markdown:
+3. Store summary as Markdown:
    data/earnings/<date>/<stock_code>_summary.md
 
-5. User marks "interested" reports → trigger deep analysis:
-   - Business segment / regional breakdown
-   - Peer comparison (same industry)
-   - Historical trend analysis
-   - Valuation reasonableness assessment
+4. User marks "interested" reports:
+   - Trigger deep analysis (segment breakdown, peer comparison, valuation)
+   - On-demand fetch original document and forward via email/WeChat/Feishu
+   - Original documents are NOT stored locally
 ```
 
 ### Configuration
 - `STOCK_ARM_EARNINGS_SCAN_SCOPE=watchlist|all` (default: watchlist)
-- `STOCK_ARM_EARNINGS_DOWNLOAD_PDF=true|false` (default: false)
 - `STOCK_ARM_EARNINGS_AUTO_DEEP_ANALYSIS=false` (default: false, manual trigger)
+
+### Scheduling
+- Registered as `earnings_scan` in TaskScheduler (daily 20:00 during earnings season)
+- Cloud mode: auto-trigger during earnings months (April, August, October)
+- Local mode: on startup, check if today is earnings season and if scan already ran today
 
 ---
 
@@ -116,6 +119,11 @@ StockAnalysisResult:
 
 Storage: `data/briefings/<date>_international.md`
 
+### Scheduling
+- Registered as `daily_briefing` in TaskScheduler (daily 19:00)
+- Cloud mode: auto-generate every trading day
+- Local mode: on startup, generate if today's briefing not yet created
+
 ---
 
 ## 4. Research Report Management (研报管理)
@@ -126,10 +134,11 @@ Storage: `data/briefings/<date>_international.md`
 - Longbridge research (HK/US stocks)
 
 ### Features
-- Filter and download by: industry, individual stock, rating
-- LLM summary per report: core thesis, target price, logic chain, risk alerts
+- Filter by: industry, individual stock, rating
+- LLM summary per report: core thesis, target price, logic chain, risk alerts (only summary stored, not original document)
 - Tracking: compare rating changes across brokers for same stock over time
-- Push: auto-push reports matching watchlist stocks
+- Push: auto-push summaries matching watchlist stocks
+- On-demand: user can request original document forwarded via email/WeChat/Feishu (fetched on demand, not stored)
 
 ### Output per Report
 ```
