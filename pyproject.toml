@@ -60,6 +60,10 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = false
 
+[[tool.mypy.overrides]]
+module = ["efinance.*", "akshare.*", "baostock.*", "tushare.*"]
+ignore_missing_imports = true
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
 testpaths = ["tests"]
