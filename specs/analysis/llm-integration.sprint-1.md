@@ -1,0 +1,26 @@
+## Sprint Report
+
+- **Feature Spec**: llm-integration (specs/analysis/llm-integration.md)
+- **Files Changed**:
+  - `src/analysis/__init__.py` — 分析模块包根
+  - `src/analysis/llm/__init__.py` — 导出公共接口
+  - `src/analysis/llm/base.py` — BaseLLMProvider ABC + LLMResponse 数据类
+  - `src/analysis/llm/router.py` — LiteLLMRouter（LiteLLM 封装 + fallback + 结构化输出）
+  - `src/analysis/llm/prompt_manager.py` — PromptManager（Jinja2 模板加载和渲染）
+  - `src/analysis/llm/budget.py` — TokenBudgetTracker（每日 token 预算控制）
+  - `prompts/stock_analysis.j2` — 示例 prompt 模板
+  - `tests/unit/analysis/test_llm.py` — 36 个单元测试
+- **New Dependencies**: none（litellm 已在 requirements.txt 中）
+- **Test Coverage**: 36/36 passed
+- **Self-Check Results**:
+  - [pass] 代码遵循 CLAUDE.md 编码约定
+  - [pass] 无硬编码配置值
+  - [pass] 所有验收标准有对应测试
+  - [pass] Lint 零错误
+  - [pass] 单元测试全部通过（36 passed in 16.00s）
+  - [pass] 无安全问题（API Key 通过 SecretStr 管理）
+- **Known Limitations**:
+  - litellm 升级到 1.82.6 以兼容 openai SDK 新版本
+  - TokenBudgetTracker 为内存实现，重启后重置（后续可持久化到数据库）
+  - 结构化输出依赖 LLM 返回合法 JSON，复杂 schema 可能需要多次 retry
+- **Integrated Skills**: none

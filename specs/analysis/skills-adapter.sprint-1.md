@@ -1,0 +1,28 @@
+## Sprint Report
+
+- **Feature Spec**: Skills 适配器层 (`specs/analysis/skills-adapter.md`)
+- **Files Changed**:
+  - `src/analysis/skills/__init__.py` — 模块入口，导出公开接口
+  - `src/analysis/skills/base.py` — BaseSkillAdapter ABC（48 行）
+  - `src/analysis/skills/registry.py` — SkillRegistry 注册表管理器（114 行）
+  - `src/analysis/skills/loader.py` — YAML 策略加载器（75 行）
+  - `tests/unit/analysis/test_skills.py` — 单元测试（21 个用例）
+  - `specs/analysis/skills-adapter.md` — Feature Spec
+- **New Dependencies**: 无（PyYAML、Pydantic 已在 requirements.txt 中）
+- **Test Coverage**: 21/21 passed
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范
+  - [x] 无硬编码配置值
+  - [x] 所有 AC 都有对应测试
+  - [x] 无新增依赖
+  - [x] 外部调用有错误处理（yaml.safe_load + 校验）
+  - [x] 无安全问题（使用 yaml.safe_load，无注入风险）
+  - [x] Lint 通过：ruff check — All checks passed
+  - [x] 类型检查通过：mypy — Success: no issues found in 4 source files
+  - [x] 全部单元测试通过：21 passed in 0.40s
+  - [x] 适配器代码均未超过 200 行（base.py: 48 行，registry.py: 114 行，loader.py: 75 行）
+- **Known Limitations**:
+  - 初版仅提供框架，未实现具体技能适配器
+  - SkillRegistry 默认路径为相对路径 `skills/registry.yaml`，需从项目根目录运行
+  - 策略加载器不支持策略间依赖关系
+- **Integrated Skills**: 无（本 Sprint 实现框架本身）
