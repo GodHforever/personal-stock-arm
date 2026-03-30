@@ -173,3 +173,4 @@ Commit format:
 | Module | Status | Sprint | Notes |
 |--------|--------|--------|-------|
 | config | Completed | Sprint #1 | ConfigManager 单例 + 8分区 Pydantic 模型 + 多源优先级加载 + 运行模式检测 (QA 85/100) |
+| log | Completed | Sprint #2 | setup_logging + get_logger + 运行模式自适应输出 + RotatingFileHandler (QA 92/100) |
