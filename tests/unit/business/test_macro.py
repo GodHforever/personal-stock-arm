@@ -403,8 +403,6 @@ class TestMacroTrackerPull:
 
         tracker = MacroTracker(db=mock_db, llm=mock_llm)
 
-        import akshare as ak  # type: ignore[import-untyped]
-
         with patch("src.business.macro.tracker.MACRO_INDICATORS", [
             IndicatorDef(
                 name="CPI",
@@ -422,12 +420,10 @@ class TestMacroTrackerPull:
                 unit="%",
                 value_column="同比增长",
             ),
-        ]), patch.object(
-            ak, "macro_china_ppi_monthly", create=True, new=lambda **kw: None,
-        ), patch(
+        ]), patch(
             "src.business.macro.tracker.asyncio.to_thread",
             side_effect=mock_to_thread,
-        ):
+        ), patch("akshare.macro_china_ppi_monthly", create=True):
             results = await tracker.pull_daily_indicators()
 
         assert len(results) == 2
