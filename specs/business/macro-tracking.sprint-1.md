@@ -1,0 +1,27 @@
+## Sprint Report
+
+- **Feature Spec**: `specs/business/macro-tracking.md` — 宏观数据追踪
+- **Files Changed**:
+  - `src/business/macro/__init__.py` (新增)
+  - `src/business/macro/models.py` (新增)
+  - `src/business/macro/indicators.py` (新增)
+  - `src/business/macro/tracker.py` (新增)
+  - `specs/business/macro-tracking.md` (新增)
+  - `tests/unit/business/test_macro.py` (新增)
+- **New Dependencies**: 无（使用已有的 sqlalchemy, pydantic, pandas, akshare）
+- **Test Coverage**: 34/34 通过
+- **Self-Check Results**:
+  - [x] 代码遵循 CLAUDE.md 编码规范（中文注释、snake_case 命名、type hints）
+  - [x] 无硬编码配置值（通过 ConfigManager 和常量定义）
+  - [x] 所有 AC 对应测试用例（AC1-AC8 均有测试覆盖）
+  - [x] 无新依赖需要添加
+  - [x] 外部调用有超时（_FETCH_TIMEOUT=10s）、错误处理、降级
+  - [x] 无安全问题（无 API Key 暴露、无注入风险）
+  - [x] 所有单元测试通过（34/34）
+  - [x] 外部调用均通过 mock 测试
+- **Known Limitations**:
+  - AkShare API 名称和参数可能随库版本变化，需要运行时验证
+  - Alembic 迁移未在本 Sprint 创建（需要数据库模块先完成迁移基础设施）
+  - AC-9（调度器集成）为声明式注册，等调度器任务注册机制就绪后对接
+  - 容器环境 Python 3.10 缺少 StrEnum 支持，测试需通过 Python 3.11 运行
+- **Integrated Skills**: 无

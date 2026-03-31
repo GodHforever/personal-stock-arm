@@ -117,9 +117,24 @@ class PushConfig(BaseModel):
     """推送通知配置。"""
 
     wechat_webhook_url: SecretStr = SecretStr("")
+    feishu_webhook_url: SecretStr = SecretStr("")
+    email_smtp_host: str = ""
+    email_smtp_port: int = 465
+    email_sender: str = ""
+    email_password: SecretStr = SecretStr("")
+    email_receivers: str = ""
+    custom_webhook_urls: str = ""
     schedule_time: str = "18:00"
     silent_start: str = "22:00"
     silent_end: str = "08:00"
+    event_push_daily_limit: int = 10
+
+    @field_validator("event_push_daily_limit")
+    @classmethod
+    def _validate_daily_limit(cls, v: int) -> int:
+        if v < 0:
+            raise ValueError("事件推送每日限额不能为负数")
+        return v
 
 
 class AppConfig(BaseModel):

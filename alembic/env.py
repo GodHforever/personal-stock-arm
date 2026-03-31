@@ -11,6 +11,8 @@ from sqlalchemy.ext.asyncio import async_engine_from_config
 
 from src.db.base import Base
 from src.db.models import SchedulerState  # noqa: F401 — 确保模型注册到 Base.metadata
+from src.business.macro.models import MacroRecord  # noqa: F401
+from src.business.watchlist.models import AnalysisRecord, WatchlistGroup  # noqa: F401
 
 # Alembic Config 对象
 config = context.config

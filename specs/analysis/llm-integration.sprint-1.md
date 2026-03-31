@@ -2,25 +2,29 @@
 
 - **Feature Spec**: llm-integration (specs/analysis/llm-integration.md)
 - **Files Changed**:
-  - `src/analysis/__init__.py` — 分析模块包根
-  - `src/analysis/llm/__init__.py` — 导出公共接口
-  - `src/analysis/llm/base.py` — BaseLLMProvider ABC + LLMResponse 数据类
-  - `src/analysis/llm/router.py` — LiteLLMRouter（LiteLLM 封装 + fallback + 结构化输出）
-  - `src/analysis/llm/prompt_manager.py` — PromptManager（Jinja2 模板加载和渲染）
-  - `src/analysis/llm/budget.py` — TokenBudgetTracker（每日 token 预算控制）
-  - `prompts/stock_analysis.j2` — 示例 prompt 模板
-  - `tests/unit/analysis/test_llm.py` — 36 个单元测试
-- **New Dependencies**: none（litellm 已在 requirements.txt 中）
+  - `src/analysis/llm/__init__.py` — LLM 子模块公共接口导出（延迟导入 LiteLLMRouter 避免 litellm 导入副作用）
+  - `src/analysis/llm/base.py` — BaseLLMProvider ABC + LLMResponse Pydantic 数据模型
+  - `src/analysis/llm/router.py` — LiteLLMRouter 实现：litellm.acompletion 调用、fallback chain、结构化输出解析与重试、调用日志
+  - `src/analysis/llm/prompt_manager.py` — PromptManager：Jinja2 (.j2) 和简单占位符 (.txt) 模板加载与渲染
+  - `src/analysis/llm/budget.py` — TokenBudgetTracker：内存中当日 token 用量追踪、80% 警告、100% 拒绝、日期切换自动重置
+  - `prompts/stock_analysis.j2` — 个股分析示例 Prompt 模板
+  - `tests/unit/analysis/__init__.py` — 测试包初始化
+  - `tests/unit/analysis/test_llm.py` — 36 个单元测试覆盖所有 AC
+  - `pyproject.toml` — 新增 litellm、jinja2 的 mypy overrides
+- **New Dependencies**: jinja2（Prompt 模板渲染），litellm 已在 pyproject.toml 中
 - **Test Coverage**: 36/36 passed
 - **Self-Check Results**:
-  - [pass] 代码遵循 CLAUDE.md 编码约定
-  - [pass] 无硬编码配置值
-  - [pass] 所有验收标准有对应测试
-  - [pass] Lint 零错误
-  - [pass] 单元测试全部通过（36 passed in 16.00s）
-  - [pass] 无安全问题（API Key 通过 SecretStr 管理）
+  - [pass] 代码遵循 CLAUDE.md 编码约定（中文注释、Pydantic 模型、type hints）
+  - [pass] 无硬编码配置值（所有配置通过 ConfigManager 读取）
+  - [pass] 所有验收标准有对应测试（AC-1 至 AC-9 均覆盖）
+  - [pass] Lint 零错误: ruff check src/analysis/ — All checks passed
+  - [pass] 类型检查通过: mypy src/analysis/ — Success: no issues found in 14 source files
+  - [pass] 单元测试通过: pytest tests/unit/analysis/test_llm.py -v — 36 passed in 12.68s
+  - [pass] 无安全问题（API Key 通过 SecretStr 访问，不在日志中暴露）
+  - [pass] litellm 在测试中完全 mock，无需真实 API Key
 - **Known Limitations**:
-  - litellm 升级到 1.82.6 以兼容 openai SDK 新版本
-  - TokenBudgetTracker 为内存实现，重启后重置（后续可持久化到数据库）
-  - 结构化输出依赖 LLM 返回合法 JSON，复杂 schema 可能需要多次 retry
+  - Token 预算仅在内存中跟踪，进程重启后重置（符合需求文档要求的简单实现）
+  - 结构化输出解析仅支持 JSON 格式，不支持其他格式（如 YAML）
+  - litellm __init__.py 采用延迟导入以避免 litellm 库的网络请求和初始化副作用影响测试收集
+  - 无 API Key 时 LiteLLMRouter 可正常初始化，调用时返回明确错误信息
 - **Integrated Skills**: none

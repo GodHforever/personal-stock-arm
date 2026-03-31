@@ -6,7 +6,6 @@ import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
-import pytest_asyncio
 
 from src.analysis.llm.base import LLMResponse
 from src.business.macro.indicators import (
